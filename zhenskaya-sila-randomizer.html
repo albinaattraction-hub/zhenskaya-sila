@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Женская Сила — Карты Дня</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #0e0b14;
+    --surface: #16121f;
+    --gold: #c9a96e;
+    --gold-light: #e8d5a8;
+    --purple: #6b4fa0;
+    --purple-light: #9b7fd4;
+    --text: #e8e0d5;
+    --text-muted: #8a7f90;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Montserrat', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px 60px;
+  }
+
+  .stars {
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.1) 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 70%, rgba(255,255,255,0.12) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.08) 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,0.1) 0%, transparent 100%),
+      radial-gradient(2px 2px at 35% 15%, rgba(201,169,110,0.2) 0%, transparent 100%),
+      radial-gradient(2px 2px at 65% 85%, rgba(155,127,212,0.15) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+
+  header {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .eyebrow {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.8;
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 6vw, 42px);
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: var(--gold-light);
+    line-height: 1.2;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    max-width: 340px;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 4px 0;
+  }
+
+  /* Upload section */
+  .upload-section {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid rgba(201,169,110,0.15);
+    border-radius: 16px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .upload-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--gold-light);
+    letter-spacing: 1px;
+  }
+
+  .upload-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+  }
+
+  .upload-slot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .upload-slot label {
+    width: 100%;
+    aspect-ratio: 2/3;
+    border: 1px dashed rgba(201,169,110,0.3);
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    transition: border-color 0.3s;
+    background: rgba(201,169,110,0.03);
+    position: relative;
+  }
+
+  .upload-slot label:hover {
+    border-color: rgba(201,169,110,0.6);
+  }
+
+  .upload-slot label img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    inset: 0;
+  }
+
+  .upload-slot label .plus {
+    font-size: 18px;
+    color: rgba(201,169,110,0.4);
+    transition: opacity 0.3s;
+  }
+
+  .upload-slot label.has-image .plus {
+    display: none;
+  }
+
+  .upload-slot input[type="file"] {
+    display: none;
+  }
+
+  .slot-name {
+    font-size: 8px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .upload-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* Main button */
+  .reveal-btn {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold-light);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 16px 48px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .reveal-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201,169,110,0.1), rgba(107,79,160,0.1));
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .reveal-btn:hover::before { opacity: 1; }
+  .reveal-btn:hover {
+    box-shadow: 0 0 30px rgba(201,169,110,0.15);
+  }
+
+  .reveal-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* Cards area */
+  .cards-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .date-label {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    width: 100%;
+  }
+
+  .card-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .card-wrapper.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .card-wrapper:nth-child(2) {
+    transition-delay: 0.2s;
+  }
+
+  .card-badge {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+  }
+
+  .card-img-wrap {
+    width: 100%;
+    aspect-ratio: 2/3;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(201,169,110,0.2);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .card-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-placeholder .planet-symbol {
+    font-size: 32px;
+    opacity: 0.3;
+  }
+
+  .card-placeholder .planet-name-ph {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+  }
+
+  .card-info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .card-planet {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--gold-light);
+    letter-spacing: 2px;
+  }
+
+  .card-desc {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-muted);
+    line-height: 1.7;
+    max-width: 240px;
+  }
+
+  /* Separator between cards */
+  .cards-separator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 0 4px;
+  }
+
+  .sep-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+  }
+
+  .sep-line {
+    width: 1px;
+    flex: 1;
+    background: linear-gradient(180deg, transparent, rgba(201,169,110,0.3), transparent);
+    min-height: 60px;
+  }
+
+  /* Footer */
+  footer {
+    font-size: 10px;
+    color: rgba(138,127,144,0.4);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+
+  @media (max-width: 480px) {
+    .upload-grid { grid-template-columns: repeat(4, 1fr); }
+    .cards-row { grid-template-columns: 1fr; gap: 32px; }
+  }
+</style>
+</head>
+<body>
+<div class="stars"></div>
+
+<div class="container">
+
+  <header>
+    <span class="eyebrow">Сакральные практики</span>
+    <h1>Женская Сила</h1>
+    <div class="divider"></div>
+    <p class="subtitle">Две карты дня — энергии, которые зовут тебя сегодня</p>
+  </header>
+
+  <!-- Upload section -->
+  <div class="upload-section" id="uploadSection">
+    <div class="upload-title">Загрузи карты планет</div>
+    <div class="upload-grid">
+      <div class="upload-slot">
+        <label id="label-luna" for="img-luna">
+          <span class="plus">+</span>
+        </label>
+        <input type="file" id="img-luna" accept="image/*" onchange="loadImage(this, 'luna')">
+        <span class="slot-name">Луна</span>
+      </div>
+      <div class="upload-slot">
+        <label id="label-mars" for="img-mars">
+          <span class="plus">+</span>
+        </label>
+        <input type="file" id="img-mars" accept="image/*" onchange="loadImage(this, 'mars')">
+        <span class="slot-name">Марс</span>
+      </div>
+      <div class="upload-slot">
+        <label id="label-mercury" for="img-mercury">
+          <span class="plus">+</span>
+        </label>
+        <input type="file" id="img-mercury" accept="image/*" onchange="loadImage(this, 'mercury')">
+        <span class="slot-name">Меркурий</span>
+      </div>
+      <div class="upload-slot">
+        <label id="label-jupiter" for="img-jupiter">
+          <span class="plus">+</span>
+        </label>
+        <input type="file" id="img-jupiter" accept="image/*" onchange="loadImage(this, 'jupiter')">
+        <span class="slot-name">Юпитер</span>
+      </div>
+      <div class="upload-slot">
+        <label id="label-venus" for="img-venus">
+          <span class="plus">+</span>
+        </label>
+        <input type="file" id="img-venus" accept="image/*" onchange="loadImage(this, 'venus')">
+        <span class="slot-name">Венера</span>
+      </div>
+      <div class="upload-slot">
+        <label id="label-sun" for="img-sun">
+          <span class="plus">+</span>
+        </label>
+        <input type="file" id="img-sun" accept="image/*" onchange="loadImage(this, 'sun')">
+        <span class="slot-name">Солнце</span>
+      </div>
+      <div class="upload-slot">
+        <label id="label-saturn" for="img-saturn">
+          <span class="plus">+</span>
+        </label>
+        <input type="file" id="img-saturn" accept="image/*" onchange="loadImage(this, 'saturn')">
+        <span class="slot-name">Сатурн</span>
+      </div>
+    </div>
+    <p class="upload-hint">Нажми на ячейку и выбери картинку. Загружается один раз — сохраняется в браузере.</p>
+  </div>
+
+  <button class="reveal-btn" id="revealBtn" onclick="revealCards()">
+    Открыть карты дня
+  </button>
+
+  <div class="cards-area" id="cardsArea" style="display:none">
+    <span class="date-label" id="dateLabel"></span>
+    <div class="cards-row">
+      <div class="card-wrapper" id="card1">
+        <span class="card-badge">включить сегодня</span>
+        <div class="card-img-wrap" id="img1"></div>
+        <div class="card-info">
+          <div class="card-planet" id="name1"></div>
+          <div class="card-desc" id="desc1"></div>
+        </div>
+      </div>
+      <div class="card-wrapper" id="card2">
+        <span class="card-badge">наблюдать и отпускать</span>
+        <div class="card-img-wrap" id="img2"></div>
+        <div class="card-info">
+          <div class="card-planet" id="name2"></div>
+          <div class="card-desc" id="desc2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Женская Сила · Альбина</footer>
+
+</div>
+
+<script>
+const planets = {
+  luna:    { name: 'Луна',     desc: 'Сегодня твоя сила в глубоком чувствовании и доверии своим образам. Позволь себе не объяснять — просто ощущать.' },
+  mars:    { name: 'Марс',     desc: 'Сегодня день действия из силы, а не из страха. Сделай то, что давно откладывала — тело знает, оно готово.' },
+  mercury: { name: 'Меркурий', desc: 'Сегодня твои слова и мысли особенно сильны. Говори из себя, не из чужих сценариев — твой голос открывает двери.' },
+  jupiter: { name: 'Юпитер',   desc: 'Сегодня позволь себе мыслить шире обычного. Доверяй процессу — пространство уже открывается тебе навстречу.' },
+  venus:   { name: 'Венера',   desc: 'Сегодня не добывай любовь и внимание — просто будь. Позволь себе принимать, не сжимаясь от вины.' },
+  sun:     { name: 'Солнце',   desc: 'Сегодня ты — источник, а не отражение. Не жди разрешения светить — просто займи своё место.' },
+  saturn:  { name: 'Сатурн',   desc: 'Сегодня построй одну маленькую опору для себя. Сдержи слово, данное себе — это и есть настоящая сила.' }
+};
+
+// 30 combinations, no repeats on adjacent days
+const combinations = [
+  ['luna','mars'],['venus','saturn'],['sun','mercury'],['jupiter','luna'],['mars','venus'],
+  ['mercury','saturn'],['sun','luna'],['venus','jupiter'],['saturn','mars'],['luna','mercury'],
+  ['mars','sun'],['jupiter','venus'],['saturn','luna'],['mercury','mars'],['sun','venus'],
+  ['luna','jupiter'],['mars','saturn'],['venus','mercury'],['sun','jupiter'],['saturn','mercury'],
+  ['luna','venus'],['mars','jupiter'],['mercury','sun'],['saturn','venus'],['luna','sun'],
+  ['jupiter','mercury'],['venus','mars'],['sun','saturn'],['mercury','luna'],['jupiter','saturn']
+];
+
+// Images storage
+const images = {};
+
+function loadImage(input, key) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    images[key] = e.target.result;
+    localStorage.setItem('ws_img_' + key, e.target.result);
+    updateSlotPreview(key, e.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateSlotPreview(key, src) {
+  const label = document.getElementById('label-' + key);
+  if (!label) return;
+  let img = label.querySelector('img');
+  if (!img) {
+    img = document.createElement('img');
+    label.appendChild(img);
+  }
+  img.src = src;
+  label.classList.add('has-image');
+}
+
+function loadStoredImages() {
+  Object.keys(planets).forEach(key => {
+    const stored = localStorage.getItem('ws_img_' + key);
+    if (stored) {
+      images[key] = stored;
+      updateSlotPreview(key, stored);
+    }
+  });
+}
+
+function getDayIndex() {
+  // Use a fixed epoch so all users get the same combo on the same calendar day
+  const epoch = new Date('2025-01-01').getTime();
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const daysSinceEpoch = Math.floor((today - epoch) / 86400000);
+  return daysSinceEpoch % combinations.length;
+}
+
+function revealCards() {
+  const idx = getDayIndex();
+  const combo = combinations[idx];
+
+  const p1 = planets[combo[0]];
+  const p2 = planets[combo[1]];
+
+  // Date label
+  const now = new Date();
+  const options = { day: 'numeric', month: 'long', year: 'numeric' };
+  document.getElementById('dateLabel').textContent = now.toLocaleDateString('ru-RU', options);
+
+  // Card 1
+  setCard('img1', 'name1', 'desc1', combo[0], p1);
+  setCard('img2', 'name2', 'desc2', combo[1], p2);
+
+  // Show
+  const area = document.getElementById('cardsArea');
+  area.style.display = 'flex';
+
+  setTimeout(() => {
+    document.getElementById('card1').classList.add('visible');
+    setTimeout(() => {
+      document.getElementById('card2').classList.add('visible');
+    }, 200);
+  }, 50);
+
+  // Scroll to cards
+  setTimeout(() => {
+    area.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 300);
+}
+
+function setCard(imgId, nameId, descId, key, planet) {
+  const imgWrap = document.getElementById(imgId);
+  imgWrap.innerHTML = '';
+
+  if (images[key]) {
+    const img = document.createElement('img');
+    img.src = images[key];
+    img.alt = planet.name;
+    imgWrap.appendChild(img);
+  } else {
+    const ph = document.createElement('div');
+    ph.className = 'card-placeholder';
+    ph.innerHTML = `<div class="planet-name-ph">${planet.name}</div>`;
+    imgWrap.appendChild(ph);
+  }
+
+  document.getElementById(nameId).textContent = planet.name;
+  document.getElementById(descId).textContent = planet.desc;
+}
+
+// Init
+loadStoredImages();
+</script>
+</body>
+</html>

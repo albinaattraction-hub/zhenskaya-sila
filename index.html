@@ -96,7 +96,6 @@
     max-width: 320px;
   }
 
-  /* Button */
   .reveal-btn {
     background: transparent;
     border: 1px solid rgba(201,169,110,0.6);
@@ -126,7 +125,6 @@
   .reveal-btn:hover::before { opacity: 1; }
   .reveal-btn:hover { box-shadow: 0 0 32px rgba(201,169,110,0.12); border-color: var(--gold); }
 
-  /* Cards */
   .cards-area {
     width: 100%;
     display: flex;
@@ -274,36 +272,50 @@
 </div>
 
 <script>
-const planets = {
-  luna:    { name: 'Луна',     img: 'luna.png',     desc: 'Сегодня твоя сила в глубоком чувствовании и доверии своим образам. Позволь себе не объяснять — просто ощущать.' },
-  mars:    { name: 'Марс',     img: 'mars.png',     desc: 'Сегодня день действия из силы, а не из страха. Сделай то, что давно откладывала — тело знает, оно готово.' },
-  mercury: { name: 'Меркурий', img: 'mercury.png',  desc: 'Сегодня твои слова и мысли особенно сильны. Говори из себя, не из чужих сценариев — твой голос открывает двери.' },
-  jupiter: { name: 'Юпитер',   img: 'jupiter.png',  desc: 'Сегодня позволь себе мыслить шире обычного. Доверяй процессу — пространство уже открывается тебе навстречу.' },
-  venus:   { name: 'Венера',   img: 'venus.png',    desc: 'Сегодня не добывай любовь и внимание — просто будь. Позволь себе принимать, не сжимаясь от вины.' },
-  sun:     { name: 'Солнце',   img: 'sun.png',      desc: 'Сегодня ты — источник, а не отражение. Не жди разрешения светить — просто займи своё место.' },
-  saturn:  { name: 'Сатурн',   img: 'saturn.png',   desc: 'Сегодня построй одну маленькую опору для себя. Сдержи слово, данное себе — это и есть настоящая сила.' }
-};
-
-const combinations = [
-  ['luna','mars'],['venus','saturn'],['sun','mercury'],['jupiter','luna'],['mars','venus'],
-  ['mercury','saturn'],['sun','luna'],['venus','jupiter'],['saturn','mars'],['luna','mercury'],
-  ['mars','sun'],['jupiter','venus'],['saturn','luna'],['mercury','mars'],['sun','venus'],
-  ['luna','jupiter'],['mars','saturn'],['venus','mercury'],['sun','jupiter'],['saturn','mercury'],
-  ['luna','venus'],['mars','jupiter'],['mercury','sun'],['saturn','venus'],['luna','sun'],
-  ['jupiter','mercury'],['venus','mars'],['sun','saturn'],['mercury','luna'],['jupiter','saturn']
+const planets = [
+  { key: 'luna',    name: 'Луна',     img: 'luna.png',     desc: 'Сегодня твоя сила в глубоком чувствовании и доверии своим образам. Позволь себе не объяснять — просто ощущать.' },
+  { key: 'mars',    name: 'Марс',     img: 'mars.png',     desc: 'Сегодня день действия из силы, а не из страха. Сделай то, что давно откладывала — тело знает, оно готово.' },
+  { key: 'mercury', name: 'Меркурий', img: 'mercury.png',  desc: 'Сегодня твои слова и мысли особенно сильны. Говори из себя, не из чужих сценариев — твой голос открывает двери.' },
+  { key: 'jupiter', name: 'Юпитер',   img: 'jupiter.png',  desc: 'Сегодня позволь себе мыслить шире обычного. Доверяй процессу — пространство уже открывается тебе навстречу.' },
+  { key: 'venus',   name: 'Венера',   img: 'venus.png',    desc: 'Сегодня не добывай любовь и внимание — просто будь. Позволь себе принимать, не сжимаясь от вины.' },
+  { key: 'sun',     name: 'Солнце',   img: 'sun.png',      desc: 'Сегодня ты — источник, а не отражение. Не жди разрешения светить — просто займи своё место.' },
+  { key: 'saturn',  name: 'Сатурн',   img: 'saturn.png',   desc: 'Сегодня построй одну маленькую опору для себя. Сдержи слово, данное себе — это и есть настоящая сила.' }
 ];
 
-function getDayIndex() {
-  const epoch = new Date('2025-01-01').getTime();
-  const today = new Date();
-  const d = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
-  return Math.floor((d - epoch) / 86400000) % combinations.length;
+function getTodayKey() {
+  const d = new Date();
+  return `ws_cards_${d.getFullYear()}_${d.getMonth()}_${d.getDate()}`;
+}
+
+function getRandomPair() {
+  // Check if already picked today
+  const key = getTodayKey();
+  const stored = localStorage.getItem(key);
+  if (stored) {
+    return JSON.parse(stored);
+  }
+
+  // Generate unique random seed per user per day
+  // Use random + store it
+  const shuffled = [...planets].sort(() => Math.random() - 0.5);
+  const pair = [shuffled[0].key, shuffled[1].key];
+  localStorage.setItem(key, JSON.stringify(pair));
+
+  // Clean up old keys
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    if (k && k.startsWith('ws_cards_') && k !== key) {
+      localStorage.removeItem(k);
+    }
+  }
+
+  return pair;
 }
 
 function revealCards() {
-  const combo = combinations[getDayIndex()];
-  const p1 = planets[combo[0]];
-  const p2 = planets[combo[1]];
+  const pair = getRandomPair();
+  const p1 = planets.find(p => p.key === pair[0]);
+  const p2 = planets.find(p => p.key === pair[1]);
 
   const now = new Date();
   document.getElementById('dateLabel').textContent =
